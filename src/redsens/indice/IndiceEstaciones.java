@@ -3,36 +3,44 @@ package redsens.indice;
 import java.util.List;
 import redsens.modelo.Estacion;
 
-/** Operaciones del índice ordenado de estaciones. La clave es el código. */
+/**
+ * Índice ordenado de estaciones. La clave es el número de estación
+ * (Estacion.getNumero()).
+ */
 public interface IndiceEstaciones {
     /**
-     * Inserta la estación; si ya existe una con el mismo código, la sobrescribe.
+     * Inserta la estación; si ya existe una con el mismo número, la sobrescribe.
      */
     void insertar(Estacion e);
 
-    /** @return la estación con ese código, o null si no existe. */
-    Estacion buscar(String codigo);
+    /** @return la estación con ese número, o null si no existe. */
+    Estacion buscar(int numero);
 
     /** @return true si existía y fue eliminada. */
-    boolean eliminar(String codigo);
+    boolean eliminar(int numero);
 
     /** Saca todos los elementos. */
     void vaciar();
 
-    /** Cantidad de estaciones. */
     int size();
 
-    /** Todas las estaciones ordenadas por código (recorrido inorden). */
-    List<Estacion> listarEnOrden();
+    List<Estacion> inorden();
 
-    /** Estaciones con código entre desde y hasta, ambos incluidos, en orden. */
-    List<Estacion> listarPorRango(String desde, String hasta);
+    List<Estacion> preorden();
 
-    /** Estaciones críticas (la definición sale del enunciado). */
+    List<Estacion> postorden();
+
+    /** Estaciones con número entre desde y hasta (ambos incluidos), en orden. */
+    List<Estacion> listarPorRango(int desde, int hasta);
+
+    /** Estaciones con batería menor a 20, ordenadas por número. Alimenta a M3. */
     List<Estacion> detectarCriticas();
 
-    /** Altura del árbol, para comparar ABB y AVL en M6. */
     int altura();
+
+    int contarNodos();
+
+    int contarHojas();
 
     String nombre();
 }
