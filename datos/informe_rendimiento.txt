@@ -1,0 +1,15 @@
+INFORME DE RENDIMIENTO - RedSens - Grupo 4 | semilla=4026 | tabla inicial=19 | base=Villa Dolores | M Josephus=4
+Mód  Experimento                        Variante                Tiempo (ms)  Detalle
+----------------------------------------------------------------------------------------------------
+M1   Insertar 10000 estaciones          Lineal (umbral 0.75)          2.302  colisiones=24455 rehash=10 cap=21911
+M1   Buscar 10000 ok + 10000 fallidas   Lineal (umbral 0.75)          3.731  sond.ok=1.40 sond.fail=2.19
+M1   Insertar 10000 estaciones          Cuadrática (umbral 0.5)        2.198  colisiones=6459 rehash=10 cap=21911
+M1   Buscar 10000 ok + 10000 fallidas   Cuadrática (umbral 0.5)        3.536  sond.ok=1.36 sond.fail=1.96
+M1   Insertar 10000 estaciones          Lineal (umbral 0.5)           1.363  colisiones=7561 rehash=10 cap=21911
+M1   Buscar 10000 ok + 10000 fallidas   Lineal (umbral 0.5)           2.842  sond.ok=1.40 sond.fail=2.19
+M1   Insertar 10000 estaciones          Encadenada (umbral 1.0)        1.906  colisiones=7339 rehash=9 cap=10949
+M1   Buscar 10000 ok + 10000 fallidas   Encadenada (umbral 1.0)        3.032  sond.ok=1.46 sond.fail=1.31
+M1   Insertar 10000 estaciones          Lineal + Horner puro         16.763  colisiones=102454 rehash=10 cap=21911
+M1   Buscar 10000 ok + 10000 fallidas   Lineal + Horner puro          8.721  sond.ok=2.30 sond.fail=2.27
+M1   Insertar 10000 estaciones          Lineal + hash SUMA (mala)      647.852  colisiones=49815000 rehash=10 cap=21911
+M1   Buscar 10000 ok + 10000 fallidas   Lineal + hash SUMA (mala)      909.106  sond.ok=4982.50 sond.fail=9960.00

@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "RedSens (menú)",
+            "request": "launch",
+            "mainClass": "redsens.app.Main",
+            "args": "4",
+            "console": "integratedTerminal",
+            "vmArgs": "-Dredsens.ansi=true"
+        },
+        {
+            "type": "java",
+            "name": "Verificación M6",
+            "request": "launch",
+            "mainClass": "redsens.app.VerificacionM6",
+            "args": "4",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "Verificación M1",
+            "request": "launch",
+            "mainClass": "redsens.app.VerificacionM1",
+            "args": "4",
+            "console": "integratedTerminal"
+        }
+    ]
+}
