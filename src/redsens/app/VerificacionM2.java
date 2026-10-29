@@ -31,6 +31,36 @@ public class VerificacionM2 {
 
         abb.insertar(new Estacion(50, "Repetida", "Córdoba", "PLUVIOMETRICA", 90, 5));
         verificar("size tras repetir el 50", "7", String.valueOf(abb.size()));
+
+        probarEliminar();
+    }
+
+    private static void probarEliminar() {
+        IndiceEstaciones abb = new ArbolABB();
+        int[] numeros = { 50, 30, 70, 20, 40, 60, 80 };
+        for (int n : numeros) {
+            abb.insertar(new Estacion(n, "E" + n, "Córdoba", "PLUVIOMETRICA", 50, 10));
+        }
+
+        verificar("eliminar hoja (20)", "true", String.valueOf(abb.eliminar(20)));
+        verificar("  inorden tras hoja", "30 40 50 60 70 80", nums(abb.inorden()));
+
+        verificar("eliminar con un hijo (30)", "true", String.valueOf(abb.eliminar(30)));
+        verificar("  preorden tras un hijo", "50 40 70 60 80", nums(abb.preorden()));
+
+        verificar("eliminar raíz con dos hijos (50)", "true", String.valueOf(abb.eliminar(50)));
+        verificar("  preorden tras dos hijos", "60 40 70 80", nums(abb.preorden()));
+        verificar("  inorden sigue ordenado", "40 60 70 80", nums(abb.inorden()));
+
+        verificar("eliminar inexistente (99)", "false", String.valueOf(abb.eliminar(99)));
+        verificar("  size", "4", String.valueOf(abb.size()));
+
+        abb.eliminar(40);
+        abb.eliminar(60);
+        abb.eliminar(70);
+        abb.eliminar(80);
+        verificar("eliminar todo: size", "0", String.valueOf(abb.size()));
+        verificar("  altura", "0", String.valueOf(abb.altura()));
     }
 
     private static String nums(List<Estacion> lista) {
