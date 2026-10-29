@@ -3,6 +3,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "ExperimentoM2Main",
+      "request": "launch",
+      "mainClass": "redsens.app.ExperimentoM2Main",
+      "projectName": "taller-aed-2_45222919"
+    },
+    {
+      "type": "java",
       "name": "VerificacionM2",
       "request": "launch",
       "mainClass": "redsens.app.VerificacionM2",
