@@ -1,6 +1,9 @@
 package redsens.app;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import redsens.indice.ArbolABB;
 import redsens.indice.ArbolAVL;
 import redsens.indice.IndiceEstaciones;
@@ -35,6 +38,7 @@ public class VerificacionM2 {
 
         probarEliminar();
         probarAVL();
+        probarEliminarAVL();
     }
 
     private static void probarEliminar() {
@@ -88,6 +92,61 @@ public class VerificacionM2 {
         verificar("AVL con 1000 en orden: altura <= 14", "true", String.valueOf(avl.altura() <= 14));
         verificar("ABB con 1000 en orden: altura", "1000", String.valueOf(abb.altura()));
         System.out.println("      (altura AVL = " + avl.altura() + " | altura ABB = " + abb.altura() + ")");
+    }
+
+    private static void probarEliminarAVL() {
+        System.out.println("--- AVL: eliminar ---");
+
+        // Árbol perfecto 1..7. Se borran 1, 3 y 2: el último desbalancea la raíz.
+        IndiceEstaciones a = armarAVL(1, 2, 3, 4, 5, 6, 7);
+        verificar("eliminar hoja (1)", "true", String.valueOf(a.eliminar(1)));
+        verificar("  preorden", "4 2 3 6 5 7", nums(a.preorden()));
+        verificar("eliminar (3)", "true", String.valueOf(a.eliminar(3)));
+        verificar("  preorden", "4 2 6 5 7", nums(a.preorden()));
+        verificar("eliminar (2): rotación simple", "true", String.valueOf(a.eliminar(2)));
+        verificar("  preorden", "6 4 5 7", nums(a.preorden()));
+        verificar("  altura", "3", String.valueOf(a.altura()));
+
+        // Borrar el 10 deja la raíz pesada a la derecha y el 30 pesado a la izquierda.
+        IndiceEstaciones b = armarAVL(20, 10, 30, 25);
+        verificar("eliminar (10): rotación doble", "true", String.valueOf(b.eliminar(10)));
+        verificar("  preorden", "25 20 30", nums(b.preorden()));
+
+        // Raíz con dos hijos: se reemplaza por el sucesor (el 5).
+        IndiceEstaciones c = armarAVL(1, 2, 3, 4, 5, 6, 7);
+        verificar("eliminar raíz con dos hijos (4)", "true", String.valueOf(c.eliminar(4)));
+        verificar("  preorden", "5 2 1 3 6 7", nums(c.preorden()));
+        verificar("  size", "6", String.valueOf(c.size()));
+        verificar("eliminar inexistente (99)", "false", String.valueOf(c.eliminar(99)));
+        verificar("  size sigue igual", "6", String.valueOf(c.size()));
+
+        // Prueba grande: 2000 claves mezcladas con la semilla del grupo, se borran
+        // 1000.
+        List<Integer> orden = new ArrayList<>();
+        for (int i = 1; i <= 2000; i++)
+            orden.add(i);
+        Collections.shuffle(orden, new Random(4026));
+        IndiceEstaciones avl = new ArbolAVL();
+        for (int n : orden) {
+            avl.insertar(new Estacion(n, "E" + n, "Córdoba", "PLUVIOMETRICA", 50, 10));
+        }
+        boolean[] borrado = new boolean[2001];
+        for (int i = 0; i < 1000; i++) {
+            avl.eliminar(orden.get(i));
+            borrado[orden.get(i)] = true;
+        }
+        StringBuilder esperado = new StringBuilder();
+        for (int n = 1; n <= 2000; n++) {
+            if (!borrado[n]) {
+                if (esperado.length() > 0)
+                    esperado.append(' ');
+                esperado.append(n);
+            }
+        }
+        verificar("aleatorio: size", "1000", String.valueOf(avl.size()));
+        verificar("aleatorio: inorden ordenado y completo", esperado.toString(), nums(avl.inorden()));
+        verificar("aleatorio: size = nodos", "1000", String.valueOf(avl.contarNodos()));
+        verificar("aleatorio: altura <= 14", "true", String.valueOf(avl.altura() <= 14));
     }
 
     private static IndiceEstaciones armarAVL(int... claves) {

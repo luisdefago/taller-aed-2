@@ -8,7 +8,9 @@ import redsens.modelo.Estacion;
 public class ArbolAVL extends ArbolBase {
 
     private boolean insertoNuevo; // para saber si la cantidad de nodos crece
+    private boolean eliminoNodo; // para saber si se borró algo
 
+    // ---------- Insertar ----------
     @Override
     public void insertar(Estacion e) {
         insertoNuevo = false;
@@ -34,6 +36,42 @@ public class ArbolAVL extends ArbolBase {
             return n;
         }
         return rebalancear(n); // al volver de la recursión, rebalancea
+    }
+
+    // ---------- Eliminar ----------
+    @Override
+    public boolean eliminar(int numero) {
+        eliminoNodo = false;
+        raiz = eliminar(raiz, numero);
+        if (eliminoNodo)
+            cantidad--;
+        return eliminoNodo;
+    }
+
+    /**
+     * Elimina recursivamente y devuelve la nueva raíz del subárbol ya balanceado.
+     */
+    private NodoArbol eliminar(NodoArbol n, int numero) {
+        if (n == null)
+            return null; // caso base: no existe
+        if (numero < n.clave()) {
+            n.izq = eliminar(n.izq, numero);
+        } else if (numero > n.clave()) {
+            n.der = eliminar(n.der, numero);
+        } else {
+            eliminoNodo = true;
+            if (n.izq == null)
+                return n.der; // sin hijos o solo hijo derecho
+            if (n.der == null)
+                return n.izq; // solo hijo izquierdo
+            // dos hijos: se reemplaza por el sucesor inorden (el menor de la derecha)
+            NodoArbol sucesor = n.der;
+            while (sucesor.izq != null)
+                sucesor = sucesor.izq;
+            n.dato = sucesor.dato;
+            n.der = eliminar(n.der, sucesor.clave()); // borra el sucesor de su lugar
+        }
+        return rebalancear(n); // al volver, rebalancea
     }
 
     // ---------- Altura y factor de equilibrio ----------
@@ -76,7 +114,7 @@ public class ArbolAVL extends ArbolBase {
         if (fe > 1) { // pesado a la izquierda
             if (factorEquilibrio(n.izq) < 0) // caso izquierda-derecha
                 n.izq = rotarIzquierda(n.izq);
-            return rotarDerecha(n);
+            return rotarDerecha(n); // con factor 0 en el hijo: rotación simple
         }
         if (fe < -1) { // pesado a la derecha
             if (factorEquilibrio(n.der) > 0) // caso derecha-izquierda
@@ -84,11 +122,6 @@ public class ArbolAVL extends ArbolBase {
             return rotarIzquierda(n);
         }
         return n; // ya estaba balanceado
-    }
-
-    @Override
-    public boolean eliminar(int numero) {
-        throw new UnsupportedOperationException("Falta implementar (Paso 6)");
     }
 
     @Override
