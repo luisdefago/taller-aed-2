@@ -5,7 +5,7 @@
 -   Valentino Rossi  : M1 (registro de estaciones con tabla hash) y la parte de M6 que sostiene a M1 (generación de datos con semilla, verificación de aleatorios e informe de rendimiento).
 -   Francisco Luna   : M2 (índice ordenado con ABB/AVL: listado en orden, consultas por rangos y detección de críticas) y la parte de M6 que sostiene a M2 (pruebas con datos generados y medición de rendimiento).
 -   Integrante 3  : [completar rol]
--   Integrante 4  : [completar rol]
+-   Matilda Ferraris  : M4 (Implementacion del Algoritmo de Huffman)
 -   Integrante 5  : [completar rol]
 
 ## Instrucciones para compilar y ejecutar
