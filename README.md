@@ -45,7 +45,7 @@ En Visual Studio Code: abrir la carpeta `RedSens`, ir a Run and Debug y elegir `
 
 ## Bitácora de IA
 -   Integrante 1 - Valentino Rossi : Herramienta utilizada: Claude.  Usé la IA en tres momentos del trabajo. Primero, para dividir los módulos del trabajo (M1 a M6) entre los integrantes de manera equitativa. Segundo, para que me diera ideas de cómo abordar el tema y encarar cada problema antes de programarlo. Por último, una vez escrito el código, la usé para revisar que no hubiera errores de lógica.
--   Integrante 2 : [completar rol]
+-   Integrante 2 : - Integrante 2 - Francisco Luna : Herramienta utilizada: Claude. Usé la IA en cuatro momentos del trabajo. Primero, para organizar el trabajo en grupo: cómo repartir los módulos y cómo usar Git. Segundo, para que me explicara paso a paso los conceptos de mi módulo (ABB, AVL, recorridos y rotaciones) antes de programarlos. Tercero, para generar el código base del M2 por pasos y las pruebas con resultados calculados a mano, que después ejecuté y verifiqué. Por último, para armar mi guía de estudio y de exposición. Un error de la IA que detecté: propuso ordenar el índice por el código de la estación (String), pero al revisar el enunciado completo se vio que la clave del M2 es el número de estación, y se corrigió. Otro: anticipó que el AVL insertaba más lento con datos aleatorios, pero mi tabla de resultados no lo sostenía, así que se eliminó esa conclusión.
 -   Integrante 3 : [completar rol]
 -   Integrante 4  : [completar rol]
 -   Integrante 5  : [completar rol]
