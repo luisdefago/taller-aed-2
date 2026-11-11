@@ -4,8 +4,8 @@
 
 -   Valentino Rossi  : M1 (registro de estaciones con tabla hash) y la parte de M6 que sostiene a M1 (generación de datos con semilla, verificación de aleatorios e informe de rendimiento).
 -   Francisco Luna   : M2 (índice ordenado con ABB/AVL: listado en orden, consultas por rangos y detección de críticas) y la parte de M6 que sostiene a M2 (pruebas con datos generados y medición de rendimiento).
--   Integrante 3  : [completar rol]
--   Integrante 4  : [completar rol]
+-   Integrante 3  : M3 (red vial con grafos: matriz y lista de adyacencia, BFS, DFS con corte de rutas, Dijkstra, Floyd y plan de visitas de la cuadrilla con el vecino más cercano).
+-   Matilda Ferraris  : M4 (Implementacion del Algoritmo de Huffman)
 -   Integrante 5  : [completar rol]
 
 ## Instrucciones para compilar y ejecutar
@@ -37,7 +37,10 @@ Ejecutar las pruebas de cada módulo:
 ```
 java -cp out redsens.app.VerificacionM1
 java -cp out redsens.app.VerificacionM6
+java -cp out redsens.app.VerificacionM3
 ```
+
+La red vial del M3 se carga desde `datos/rutas.txt` (una ruta por línea: `A;B;km`).
 
 Si no se indica el número de grupo, se usa el grupo 4.
 
@@ -79,7 +82,10 @@ Ejecutar las pruebas de cada módulo:
 ```
 java -cp out redsens.app.VerificacionM1
 java -cp out redsens.app.VerificacionM6
+java -cp out redsens.app.VerificacionM3
 ```
+
+La red vial del M3 se carga desde `datos/rutas.txt` (una ruta por línea: `A;B;km`).
 
 Si no se indica el número de grupo, se usa el grupo 4.
 

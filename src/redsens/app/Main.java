@@ -9,6 +9,10 @@ import redsens.indice.ArbolAVL; // M2
 import redsens.indice.ExperimentoM2; // M2
 import redsens.indice.IndiceEstaciones; // M2
 import redsens.modelo.Estacion;
+import redsens.red.CaminosMinimos; // M3
+import redsens.red.Grafo; // M3
+import redsens.red.PlanVisitas; // M3
+import redsens.red.Recorridos; // M3
 import redsens.registro.*;
 import redsens.sim.*;
 
@@ -25,6 +29,8 @@ public class Main {
     private static IndiceEstaciones indice; // M2: índice ordenado por número (AVL)
     private static InformeRendimiento inf; // M6: informe de rendimiento
     private static List<Estacion> red; // estaciones de la red cargada (se usan para las mediciones)
+    private static Grafo vial; // M3: red vial cargada desde datos/rutas.txt
+    private static final Path RUTAS = Path.of("datos/rutas.txt"); // M3
 
     /** Una acción del menú: imprime su resultado y puede pedir datos. */
     private interface Accion {
@@ -50,6 +56,7 @@ public class Main {
             System.out.println("   2) M6 - Simulación y pruebas");
             System.out.println("   3) Informe de rendimiento");
             System.out.println("   4) M2 - Índice ordenado (AVL)"); // M2
+            System.out.println("   5) M3 - Red vial y plan de visitas (grafos)"); // M3
             System.out.println("   0) Salir");
             switch (leer(in)) {
                 case "1" -> seccion(in, "M1 - Registro de estaciones (tabla hash)", new String[] {
@@ -72,12 +79,19 @@ public class Main {
                         "Experimento M2 (ABB vs AVL)" },
                         new Accion[] { Main::listarRango, i -> reporteCriticas(), i -> estadoIndice(),
                                 i -> recorridos(), i -> experimentoM2() });
+                case "5" -> seccion(in, "M3 - Red vial y plan de visitas (grafos)", new String[] { // M3
+                        "Ver la red (matriz y lista de adyacencia)", "BFS desde la base (niveles 1, 2 y 3)",
+                        "DFS: conexidad y corte de rutas", "Dijkstra: distancias y caminos desde una localidad",
+                        "Floyd: distancias mínimas entre todos los pares",
+                        "Plan de visitas de la cuadrilla (críticas del M2)" },
+                        new Accion[] { i -> verRed(), i -> bfsBase(), Main::cortarRutas, Main::dijkstra,
+                                i -> floyd(), i -> planVisitas() });
                 case "0" -> {
                     System.out.println("  ¡Hasta luego!");
                     return;
                 }
-                default -> System.out.println("  [!] Opción inválida. Elegí 0, 1, 2, 3 o 4."); // M2: y se vuelve a
-                                                                                               // dibujar el menú
+                default -> System.out.println("  [!] Opción inválida. Elegí 0, 1, 2, 3, 4 o 5."); // y se vuelve a
+                                                                                                  // dibujar el menú
             }
         }
     }
@@ -239,6 +253,168 @@ public class Main {
         for (int i = 0; i < Math.min(max, lista.size()); i++)
             sb.append(lista.get(i).getNumero()).append(' ');
         return sb.toString().trim() + (lista.size() > max ? " ..." : "");
+    }
+
+    // ------------------------------------------------------------------ M3
+    /** Carga la red vial desde datos/rutas.txt la primera vez que se usa. */
+    private static Grafo grafo() throws Exception {
+        if (vial == null)
+            vial = Grafo.desdeArchivo(RUTAS);
+        return vial;
+    }
+
+    private static int base(Grafo g) {
+        int b = g.indice(cfg.baseCuadrilla);
+        if (b < 0)
+            throw new IllegalStateException("La base " + cfg.baseCuadrilla + " no está en " + RUTAS);
+        return b;
+    }
+
+    /** Muestra las localidades numeradas y pide una (por defecto, la indicada). */
+    private static int pedirLocalidad(Scanner in, Grafo g, String pregunta, int defecto) {
+        for (int i = 0; i < g.cantVertices(); i++)
+            System.out.printf("   %2d) %s%n", i + 1, g.nombre(i));
+        return Consola.pedirEntero(in, pregunta, defecto + 1, 1, g.cantVertices()) - 1;
+    }
+
+    private static void verRed() throws Exception {
+        Grafo g = grafo();
+        System.out.println();
+        Consola.info("Cargada desde " + RUTAS + ": " + g.cantVertices() + " localidades y " + g.cantAristas()
+                + " rutas (no dirigido, km).");
+        System.out.println("\n  Matriz de adyacencia (km; \"-\" = sin ruta directa):\n");
+        System.out.println(g.renderMatriz().indent(2));
+        System.out.println("  Lista de adyacencia:\n");
+        System.out.println(g.renderLista().indent(2));
+        int posibles = g.cantVertices() * (g.cantVertices() - 1) / 2;
+        Consola.info(String.format(Locale.ROOT, "Densidad: %d de %d rutas posibles (%.0f %%). Conviene la lista:",
+                g.cantAristas(), posibles, 100.0 * g.cantAristas() / posibles));
+        Consola.info("BFS, DFS y Dijkstra recorren solo los vecinos reales (O(V + E)); la matriz se usa en Floyd.");
+    }
+
+    private static void bfsBase() throws Exception {
+        Grafo g = grafo();
+        int b = base(g);
+        int[] nivel = Recorridos.bfsNiveles(g, b);
+        System.out.println();
+        Consola.info("BFS desde la base (" + g.nombre(b) + "):");
+        for (int k = 1; k <= 3; k++)
+            Consola.info("  a " + k + " tramo" + (k > 1 ? "s" : "") + ":  " + String.join(", ",
+                    Recorridos.enNivel(g, nivel, k)));
+        int max = 0;
+        for (int n : nivel)
+            max = Math.max(max, n);
+        for (int k = 4; k <= max; k++)
+            Consola.info("  a " + k + " tramos:  " + String.join(", ", Recorridos.enNivel(g, nivel, k))
+                    + "  (fuera de los 3 tramos)");
+        List<String> no = Recorridos.enNivel(g, nivel, Recorridos.INALCANZABLE);
+        if (!no.isEmpty())
+            Consola.info("  inalcanzables: " + String.join(", ", no));
+    }
+
+    private static void cortarRutas(Scanner in) throws Exception {
+        Grafo g = grafo();
+        System.out.println();
+        Consola.info("Red original: " + (Recorridos.esConexa(g) ? "CONEXA (DFS llega a todas las localidades)"
+                : "NO conexa"));
+        List<String> puentes = Recorridos.puentes(g);
+        Consola.info("Rutas que aíslan localidades si se cortan solas: "
+                + (puentes.isEmpty() ? "ninguna (cada localidad tiene al menos dos caminos)"
+                        : String.join(", ", puentes)));
+        Consola.info("Ahora se simulan cortes (sobre una copia; la red original no cambia).");
+        Grafo corte = g.copia();
+        while (true) {
+            System.out.println();
+            int a = pedirLocalidad(in, corte, "Extremo A de la ruta a cortar", base(g));
+            System.out.println("   (0 = terminar)");
+            int bb = Consola.pedirEntero(in, "Extremo B de la ruta a cortar", 0, 0, corte.cantVertices()) - 1;
+            if (bb < 0)
+                break;
+            if (!corte.quitarArista(a, bb)) {
+                Consola.error("No hay ruta directa entre " + corte.nombre(a) + " y " + corte.nombre(bb) + ".");
+                continue;
+            }
+            Consola.ok("Cortada la ruta " + corte.nombre(a) + " - " + corte.nombre(bb) + ".");
+            List<String> aisladas = Recorridos.aisladasDesde(corte, base(g));
+            if (Recorridos.esConexa(corte))
+                Consola.info("La red sigue conexa: ninguna localidad queda aislada.");
+            else
+                Consola.error("La red quedó dividida. Desde la base (" + cfg.baseCuadrilla
+                        + ") no se llega a: " + String.join(", ", aisladas));
+            String seguir = Consola.pedirTexto(in, "¿Cortar otra ruta? (s/N)");
+            if (!seguir.equalsIgnoreCase("s"))
+                break;
+        }
+    }
+
+    private static void dijkstra(Scanner in) throws Exception {
+        Grafo g = grafo();
+        Consola.info("Base del grupo: " + cfg.baseCuadrilla + ". Córdoba sirve como caso de control.");
+        int o = pedirLocalidad(in, g, "Localidad de origen", base(g));
+        CaminosMinimos.Dijkstra d = CaminosMinimos.dijkstra(g, o);
+        System.out.println();
+        Consola.info("Dijkstra desde " + g.nombre(o) + ":");
+        System.out.println();
+        for (int v = 0; v < g.cantVertices(); v++) {
+            if (v == o)
+                continue;
+            String km = d.dist[v] == CaminosMinimos.INF ? "sin camino" : d.dist[v] + " km";
+            System.out.printf("  %-17s %10s   %s%n", g.nombre(v), km, CaminosMinimos.nombres(g, d.camino(v)));
+        }
+    }
+
+    private static void floyd() throws Exception {
+        Grafo g = grafo();
+        CaminosMinimos.Floyd f = CaminosMinimos.floyd(g);
+        System.out.println("\n  Matriz de distancias mínimas en km (Floyd):\n");
+        System.out.println(CaminosMinimos.renderFloyd(g, f).indent(2));
+    }
+
+    private static void planVisitas() throws Exception {
+        if (!hayIndice())
+            return;
+        Grafo g = grafo();
+        int b = base(g);
+        List<Estacion> criticas = indice.detectarCriticas(); // reporte del M2
+        int[] porLoc = PlanVisitas.criticasPorLocalidad(g, criticas);
+        List<Integer> destinos = PlanVisitas.localidadesCriticas(g, criticas, b);
+        System.out.println();
+        Consola.info("Estaciones críticas (M2): " + criticas.size() + " en " + (destinos.size() + (porLoc[b] > 0 ? 1 : 0))
+                + " localidades.");
+        for (int v = 0; v < g.cantVertices(); v++)
+            if (porLoc[v] > 0)
+                Consola.info(String.format("  %-17s %4d%s", g.nombre(v), porLoc[v],
+                        v == b ? "  (es la base: se atienden al salir)" : ""));
+        if (destinos.isEmpty()) {
+            Consola.ok("No hay localidades para visitar fuera de la base.");
+            return;
+        }
+        CaminosMinimos.Floyd f = CaminosMinimos.floyd(g);
+        PlanVisitas.Recorrido nn = PlanVisitas.vecinoMasCercano(f, b, destinos);
+        System.out.println();
+        Consola.subtitulo("Plan con el criterio del vecino más cercano (distancias de Floyd)");
+        for (int i = 1; i < nn.orden.size(); i++) {
+            int desde = nn.orden.get(i - 1), hasta = nn.orden.get(i);
+            System.out.printf("  %2d) %-17s -> %-17s %4d km   %s%n", i, g.nombre(desde), g.nombre(hasta),
+                    f.dist[desde][hasta], CaminosMinimos.nombres(g, f.camino(desde, hasta)));
+        }
+        System.out.println();
+        Consola.ok("Total: " + nn.km + " km, saliendo y volviendo a " + g.nombre(b) + ".");
+        Consola.info("Recorrido completo: " + CaminosMinimos.nombres(g, PlanVisitas.recorridoCompleto(f, nn)));
+
+        if (destinos.size() <= PlanVisitas.MAX_OPTIMO) {
+            PlanVisitas.Recorrido opt = PlanVisitas.optimo(f, b, destinos);
+            System.out.println();
+            Consola.info("Para comparar, el recorrido óptimo (probando todos los órdenes con Held-Karp):");
+            Consola.info("  " + CaminosMinimos.nombres(g, opt.orden) + " = " + opt.km + " km");
+            if (opt.km < nn.km)
+                Consola.info(String.format(Locale.ROOT, "  El vecino más cercano hace %d km de más (%.1f %%).",
+                        nn.km - opt.km, 100.0 * (nn.km - opt.km) / opt.km));
+            else
+                Consola.info("  En este caso el vecino más cercano coincide con el óptimo, pero no siempre pasa.");
+        }
+        Consola.info("¿Por qué no es óptimo? Elige el más cercano en cada paso sin mirar el resto: puede dejar");
+        Consola.info("localidades lejanas para el final y pagar caro la vuelta a la base.");
     }
 
     // ------------------------------------------------------------------ M1

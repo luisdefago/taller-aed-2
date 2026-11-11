@@ -34,6 +34,13 @@
     },
     {
       "type": "java",
+      "name": "Verificación M3",
+      "request": "launch",
+      "mainClass": "redsens.app.VerificacionM3",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "java",
       "name": "Verificación M1",
       "request": "launch",
       "mainClass": "redsens.app.VerificacionM1",

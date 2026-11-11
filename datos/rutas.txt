@@ -1,0 +1,21 @@
+# Red vial de RedSens (M3): grafo no dirigido y ponderado.
+# Una arista por línea: localidad A;localidad B;km
+# Las líneas que empiezan con # y las vacías se ignoran.
+Córdoba;Villa Carlos Paz;36
+Córdoba;Alta Gracia;39
+Córdoba;Jesús María;51
+Córdoba;Río Tercero;102
+Córdoba;Villa María;146
+Córdoba;San Francisco;205
+Villa Carlos Paz;Cosquín;24
+Cosquín;La Falda;20
+Villa Carlos Paz;Alta Gracia;35
+Alta Gracia;Río Tercero;85
+Río Tercero;Villa María;70
+Villa María;Río Cuarto;130
+Río Tercero;Río Cuarto;110
+Jesús María;Deán Funes;70
+La Falda;Deán Funes;95
+Villa Carlos Paz;Villa Dolores;140
+Villa Dolores;Río Cuarto;210
+Villa María;San Francisco;150
