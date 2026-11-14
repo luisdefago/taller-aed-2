@@ -25,6 +25,14 @@
             "mainClass": "redsens.app.VerificacionM1",
             "args": "4",
             "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "Verificación M5",
+            "request": "launch",
+            "mainClass": "redsens.app.VerificacionM5",
+            "args": "4",
+            "console": "integratedTerminal"
         }
     ]
 }

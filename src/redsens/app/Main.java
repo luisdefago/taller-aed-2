@@ -6,6 +6,8 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
 import redsens.modelo.Estacion;
+import redsens.guardias.CalendarioGuardias;
+import redsens.guardias.ExperimentoM5;
 import redsens.registro.*;
 import redsens.sim.*;
 
@@ -40,6 +42,7 @@ public class Main {
             System.out.println("   1) M1 - Registro de estaciones (tabla hash)");
             System.out.println("   2) M6 - Simulación y pruebas");
             System.out.println("   3) Informe de rendimiento");
+            System.out.println("   4) M5 - Guardias rotativas (Josephus)");
             System.out.println("   0) Salir");
             switch (leer(in)) {
                 case "1" -> seccion(in, "M1 - Registro de estaciones (tabla hash)", new String[]{
@@ -52,9 +55,12 @@ public class Main {
                     new Accion[]{i -> opcion1(), i -> opcion2(), i -> opcion3(), i -> opcion4()});
                 case "3" -> seccion(in, "Informe de rendimiento", new String[]{"Ver informe acumulado"},
                     new Accion[]{i -> System.out.println(inf.size() == 0
-                        ? "\n  Todavía no hay mediciones. Ejecutá el experimento M1 desde la sección M1." : "\n" + inf.render())});
+                        ? "\n  Todavía no hay mediciones. Ejecutá el experimento M1 o el M5 desde su sección." : "\n" + inf.render())});
+                case "4" -> seccion(in, "M5 - Guardias rotativas (Josephus)", new String[]{
+                        "Generar el calendario de guardias", "Experimento M5 (lista vs. árbol)"},
+                    new Accion[]{Main::calendario, i -> experimentoM5()});
                 case "0" -> { System.out.println("  ¡Hasta luego!"); return; }
-                default -> System.out.println("  [!] Opción inválida. Elegí 0, 1, 2 o 3.");   // y se vuelve a dibujar el menú
+                default -> System.out.println("  [!] Opción inválida. Elegí 0, 1, 2, 3 o 4.");   // y se vuelve a dibujar el menú
             }
         }
     }
@@ -181,6 +187,23 @@ public class Main {
     private static boolean hayTabla() {
         if (tabla == null) Consola.error("Primero cargá la red (M1 > opción 1).");
         return tabla != null;
+    }
+
+    // ------------------------------------------------------------------ M5
+    private static void calendario(Scanner in) {
+        int n = Consola.pedirEntero(in, "Cantidad de técnicos", 12, 1, 1000);
+        System.out.println();
+        System.out.println(new CalendarioGuardias(n, cfg.mJosephus).texto());   // M = el del grupo
+    }
+
+    private static void experimentoM5() throws Exception {
+        System.out.println("\n  Midiendo lista y árbol para N = 1.000, 10.000 y 100.000 (puede tardar unos segundos)...\n");
+        List<ExperimentoM5.Fila> filas = ExperimentoM5.ejecutar(cfg.mJosephus);
+        System.out.println(ExperimentoM5.formatear(filas));
+        inf.quitarModulo("M5");                      // para no duplicar filas si se repite el experimento
+        ExperimentoM5.alInforme(filas, inf);
+        inf.guardar(Path.of("datos/informe_rendimiento.txt"));
+        Consola.ok("Resultados agregados al informe (datos/informe_rendimiento.txt).");
     }
 
     private static void experimentoM1() throws Exception {
