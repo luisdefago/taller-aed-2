@@ -1,15 +1,51 @@
 INFORME DE RENDIMIENTO - RedSens - Grupo 4 | semilla=4026 | tabla inicial=19 | base=Villa Dolores | M Josephus=4
 Mód  Experimento                        Variante                Tiempo (ms)  Detalle
 ----------------------------------------------------------------------------------------------------
-M1   Insertar 10000 estaciones          Lineal (umbral 0.75)          2.302  colisiones=24455 rehash=10 cap=21911
-M1   Buscar 10000 ok + 10000 fallidas   Lineal (umbral 0.75)          3.731  sond.ok=1.40 sond.fail=2.19
-M1   Insertar 10000 estaciones          Cuadrática (umbral 0.5)        2.198  colisiones=6459 rehash=10 cap=21911
-M1   Buscar 10000 ok + 10000 fallidas   Cuadrática (umbral 0.5)        3.536  sond.ok=1.36 sond.fail=1.96
-M1   Insertar 10000 estaciones          Lineal (umbral 0.5)           1.363  colisiones=7561 rehash=10 cap=21911
-M1   Buscar 10000 ok + 10000 fallidas   Lineal (umbral 0.5)           2.842  sond.ok=1.40 sond.fail=2.19
-M1   Insertar 10000 estaciones          Encadenada (umbral 1.0)        1.906  colisiones=7339 rehash=9 cap=10949
-M1   Buscar 10000 ok + 10000 fallidas   Encadenada (umbral 1.0)        3.032  sond.ok=1.46 sond.fail=1.31
-M1   Insertar 10000 estaciones          Lineal + Horner puro         16.763  colisiones=102454 rehash=10 cap=21911
-M1   Buscar 10000 ok + 10000 fallidas   Lineal + Horner puro          8.721  sond.ok=2.30 sond.fail=2.27
-M1   Insertar 10000 estaciones          Lineal + hash SUMA (mala)      647.852  colisiones=49815000 rehash=10 cap=21911
-M1   Buscar 10000 ok + 10000 fallidas   Lineal + hash SUMA (mala)      909.106  sond.ok=4982.50 sond.fail=9960.00
+M1   Insertar 10000 estaciones          Lineal (umbral 0.75)         31.398  colisiones=24455 rehash=10 cap=21911
+M1   Buscar 10000 ok + 10000 fallidas   Lineal (umbral 0.75)         79.467  sond.ok=1.40 sond.fail=2.19
+M1   Insertar 10000 estaciones          Cuadrática (umbral 0.5)       14.812  colisiones=6459 rehash=10 cap=21911
+M1   Buscar 10000 ok + 10000 fallidas   Cuadrática (umbral 0.5)       70.748  sond.ok=1.36 sond.fail=1.96
+M1   Insertar 10000 estaciones          Lineal (umbral 0.5)          17.918  colisiones=7561 rehash=10 cap=21911
+M1   Buscar 10000 ok + 10000 fallidas   Lineal (umbral 0.5)          84.379  sond.ok=1.40 sond.fail=2.19
+M1   Insertar 10000 estaciones          Encadenada (umbral 1.0)        4.421  colisiones=7339 rehash=9 cap=10949
+M1   Buscar 10000 ok + 10000 fallidas   Encadenada (umbral 1.0)       64.554  sond.ok=1.46 sond.fail=1.31
+M1   Insertar 10000 estaciones          Lineal + Horner puro         55.818  colisiones=102454 rehash=10 cap=21911
+M1   Buscar 10000 ok + 10000 fallidas   Lineal + Horner puro         85.920  sond.ok=2.30 sond.fail=2.27
+M1   Insertar 10000 estaciones          Lineal + hash SUMA (mala)     1760.239  colisiones=49815000 rehash=10 cap=21911
+M1   Buscar 10000 ok + 10000 fallidas   Lineal + hash SUMA (mala)     1679.251  sond.ok=4982.50 sond.fail=9960.00
+M2   Insertar 1000 ascendente           ABB                           7.857  altura=1000 ideal=10
+M2   Buscar 1000 ascendente             ABB                           7.358  ns/búsqueda=7358
+M2   Insertar 1000 ascendente           AVL                           0.816  altura=10 ideal=10
+M2   Buscar 1000 ascendente             AVL                           0.285  ns/búsqueda=285
+M2   Insertar 1000 aleatorio            ABB                           0.284  altura=23 ideal=10
+M2   Buscar 1000 aleatorio              ABB                           0.358  ns/búsqueda=358
+M2   Insertar 1000 aleatorio            AVL                           1.023  altura=12 ideal=10
+M2   Buscar 1000 aleatorio              AVL                           0.264  ns/búsqueda=264
+M2   Insertar 5000 ascendente           ABB                          57.003  altura=5000 ideal=13
+M2   Buscar 5000 ascendente             ABB                         273.573  ns/búsqueda=54715
+M2   Insertar 5000 ascendente           AVL                           1.469  altura=13 ideal=13
+M2   Buscar 5000 ascendente             AVL                           2.264  ns/búsqueda=453
+M2   Insertar 5000 aleatorio            ABB                           1.145  altura=28 ideal=13
+M2   Buscar 5000 aleatorio              ABB                           0.860  ns/búsqueda=172
+M2   Insertar 5000 aleatorio            AVL                           1.679  altura=15 ideal=13
+M2   Buscar 5000 aleatorio              AVL                           0.796  ns/búsqueda=159
+M2   Insertar 10000 ascendente          ABB                         192.072  altura=10000 ideal=14
+M2   Buscar 10000 ascendente            ABB                        1660.979  ns/búsqueda=166098
+M2   Insertar 10000 ascendente          AVL                           1.925  altura=14 ideal=14
+M2   Buscar 10000 ascendente            AVL                           2.123  ns/búsqueda=212
+M2   Insertar 10000 aleatorio           ABB                           2.434  altura=35 ideal=14
+M2   Buscar 10000 aleatorio             ABB                           2.474  ns/búsqueda=247
+M2   Insertar 10000 aleatorio           AVL                           5.102  altura=16 ideal=14
+M2   Buscar 10000 aleatorio             AVL                           2.218  ns/búsqueda=222
+M5   Josephus N=1000 M=4                Lista + iterador              1.598  O(N·M)
+M5   Josephus N=1000 M=4                ABB k-ésimo                   0.875  O(N log N)
+M5   Josephus N=10000 M=4               Lista + iterador             11.722  O(N·M)
+M5   Josephus N=10000 M=4               ABB k-ésimo                   8.119  O(N log N)
+M5   Josephus N=100000 M=4              Lista + iterador             33.523  O(N·M)
+M5   Josephus N=100000 M=4              ABB k-ésimo                  45.255  O(N log N)
+M5   Josephus N=1000 M=1000             Lista + iterador              7.818  O(N·M)
+M5   Josephus N=1000 M=1000             ABB k-ésimo                   0.445  O(N log N)
+M5   Josephus N=10000 M=1000            Lista + iterador             91.329  O(N·M)
+M5   Josephus N=10000 M=1000            ABB k-ésimo                   5.395  O(N log N)
+M5   Josephus N=100000 M=1000           Lista + iterador           1372.734  O(N·M)
+M5   Josephus N=100000 M=1000           ABB k-ésimo                  51.313  O(N log N)
