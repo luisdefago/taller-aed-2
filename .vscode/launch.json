@@ -12,14 +12,6 @@
         },
         {
             "type": "java",
-            "name": "Verificación M6",
-            "request": "launch",
-            "mainClass": "redsens.app.VerificacionM6",
-            "args": "4",
-            "console": "integratedTerminal"
-        },
-        {
-            "type": "java",
             "name": "Verificación M1",
             "request": "launch",
             "mainClass": "redsens.app.VerificacionM1",
@@ -42,9 +34,24 @@
         },
         {
             "type": "java",
+            "name": "Verificación M3",
+            "request": "launch",
+            "mainClass": "redsens.app.VerificacionM3",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
             "name": "Verificación M5",
             "request": "launch",
             "mainClass": "redsens.app.VerificacionM5",
+            "args": "4",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "Verificación M6",
+            "request": "launch",
+            "mainClass": "redsens.app.VerificacionM6",
             "args": "4",
             "console": "integratedTerminal"
         }
