@@ -1,4 +1,6 @@
-class Nodo
+package redsens.compresion;
+
+public class Nodo
 {
     Character caracter; // simbolo contenido en el nodo
     Integer frecuencia;  // frecuencia del simbolo 
