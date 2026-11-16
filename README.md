@@ -6,7 +6,7 @@
 -   Francisco Luna   : M2 (índice ordenado con ABB/AVL: listado en orden, consultas por rangos y detección de críticas) y la parte de M6 que sostiene a M2 (pruebas con datos generados y medición de rendimiento).
 -   Integrante 3  : M3 (red vial con grafos: matriz y lista de adyacencia, BFS, DFS con corte de rutas, Dijkstra, Floyd y plan de visitas de la cuadrilla con el vecino más cercano).
 -   Matilda Ferraris  : M4 (Implementacion del Algoritmo de Huffman)
--   Integrante 5  : [completar rol]
+-   Luis Defago  : M5 (guardias rotativas con Josephus: solución simple con lista enlazada e iterador, alternativa eficiente con ABB de k-ésimo y calendario de guardias) y M6 (integración de los seis módulos en el menú, batería de experimentos e informe de rendimiento).
 
 ## Instrucciones para compilar y ejecutar
 
@@ -38,6 +38,7 @@ Ejecutar las pruebas de cada módulo:
 java -cp out redsens.app.VerificacionM1
 java -cp out redsens.app.VerificacionM2
 java -cp out redsens.app.VerificacionM3
+java -cp out redsens.app.VerificacionM4
 java -cp out redsens.app.VerificacionM5
 java -cp out redsens.app.VerificacionM6
 ```

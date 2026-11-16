@@ -210,7 +210,13 @@ public class Main {
     private static void listarRango(Scanner in) {
         if (!hayIndice())
             return;
-        Consola.info("Los números de estación van de 0 a " + (indice.size() - 1) + ".");
+        List<Estacion> todas = indice.inorden(); // en orden: el primero es el menor y el último el mayor
+        if (todas.isEmpty()) {
+            Consola.error("El índice está vacío.");
+            return;
+        }
+        Consola.info("Los números de estación van de " + todas.get(0).getNumero() + " a "
+                + todas.get(todas.size() - 1).getNumero() + ".");
         int desde = Consola.pedirEntero(in, "Desde el número", 0, 0);
         int hasta = Consola.pedirEntero(in, "Hasta el número", desde + 99, desde);
         List<Estacion> r = indice.listarPorRango(desde, hasta);
