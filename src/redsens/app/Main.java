@@ -17,6 +17,11 @@ import redsens.red.PlanVisitas; // M3
 import redsens.red.Recorridos; // M3
 import redsens.registro.*;
 import redsens.sim.*;
+import java.nio.file.Files;
+import java.util.Map;
+import redsens.compresion.CompresorArchivo;
+import redsens.compresion.Huffman;
+
 
 /**
  * Menú de consola de RedSens. Por ahora tiene M6 (simulación), M2 (índice
@@ -60,6 +65,7 @@ public class Main {
             System.out.println("   4) M2 - Índice ordenado (AVL)"); // M2
             System.out.println("   5) M3 - Red vial y plan de visitas (grafos)"); // M3
             System.out.println("   6) M5 - Guardias rotativas (Josephus)");
+            System.out.println("   7) M4 - Transmisión comprimida (Huffman)");
             System.out.println("   0) Salir");
             switch (leer(in)) {
                 case "1" -> seccion(in, "M1 - Registro de estaciones (tabla hash)", new String[] {
@@ -92,11 +98,14 @@ public class Main {
                 case "6" -> seccion(in, "M5 - Guardias rotativas (Josephus)", new String[] {
                         "Generar el calendario de guardias", "Experimento M5 (lista vs. árbol)" },
                         new Accion[] { Main::calendario, i -> experimentoM5() });
+                case "7" -> seccion(in, "M4 - Transmisión comprimida (Huffman)", new String[] {
+                        "Caso de verificación (WWXWYZWX)", "Generar, comprimir, descomprimir y verificar mediciones" },
+                        new Accion[] { i -> verificarHuffman(), i -> comprimirMediciones() });
                 case "0" -> {
                     System.out.println("  ¡Hasta luego!");
                     return;
                 }
-                default -> System.out.println("  [!] Opción inválida. Elegí 0 a 6."); // y se vuelve a
+                default -> System.out.println("  [!] Opción inválida. Elegí 0 a 7."); // y se vuelve a
                                                                                                   // dibujar el menú
             }
         }
@@ -525,5 +534,67 @@ public class Main {
         ExperimentoM1.alInforme(filas, n, inf);
         inf.guardar(Path.of("datos/informe_rendimiento.txt"));
         Consola.ok("Resultados agregados al informe (datos/informe_rendimiento.txt).");
+    }
+
+    // ------------------------------------------------------------------ M4
+    private static void verificarHuffman() {
+        String s = "WWXWYZWX";
+        var raiz = Huffman.construirArbolHuffman(Huffman.contarFrecuencias(s));
+        Map<Character, String> codigos = Huffman.generarCodigos(raiz);
+        StringBuilder bits = Huffman.codificarTexto(s, codigos);
+        System.out.println();
+        Consola.info("Códigos: " + codigos);
+        Consola.info("Tamaño fijo (8 bits/car.): " + 8 * s.length() + " bits");
+        Consola.info("Tamaño con Huffman:        " + bits.length() + " bits (esperado: 14)");
+        boolean ok = bits.length() == 14 && Huffman.decodificarTexto(raiz, bits).equals(s);
+        if (ok) Consola.ok("Caso de verificación correcto.");
+        else Consola.error("El resultado no coincide con la lectura.");
+    }
+
+    private static void comprimirMediciones() throws Exception {
+        Path txt = Path.of("datos/mediciones.txt");
+        Path huf = Path.of("datos/mediciones.huf");
+        Path out = Path.of("datos/mediciones_descomprimido.txt");
+
+        opcion4(); // reutiliza M6: genera el archivo de mediciones del día
+        String texto = Files.readString(txt);
+
+        // 1) Frecuencias, árbol y códigos
+        Map<Character, Integer> frec = Huffman.contarFrecuencias(texto);
+        var raiz = Huffman.construirArbolHuffman(frec);
+        Map<Character, String> codigos = Huffman.generarCodigos(raiz);
+
+        System.out.println();
+        Consola.info("Símbolo | Frecuencia | Código");
+        frec.entrySet().stream()
+                .sorted((a, b) -> b.getValue() - a.getValue())
+                .forEach(e -> Consola.info(String.format(Locale.ROOT, "%-7s | %10d | %s",
+                        simbolo(e.getKey()), e.getValue(), codigos.get(e.getKey()))));
+        Consola.info("¿Ningún código es prefijo de otro? "
+                + (Huffman.libreDePrefijos(codigos) ? "SÍ (correcto)" : "NO (error)"));
+
+        // 2) Tamaños y tasa de compresión
+        long original = 8L * texto.length();
+        long comprimido = Huffman.codificarTexto(texto, codigos).length();
+        System.out.println();
+        Consola.info("Tamaño original:   " + original + " bits");
+        Consola.info("Tamaño comprimido: " + comprimido + " bits");
+        Consola.info(String.format(Locale.ROOT, "Tasa de compresión: %.2f%% de ahorro (relación %.2f:1)",
+                100.0 * (1 - (double) comprimido / original), (double) original / comprimido));
+
+        // 3) Comprimir a disco, descomprimir y verificar que sea idéntico
+        CompresorArchivo.comprimir(txt, huf);
+        CompresorArchivo.descomprimir(huf, out);
+        System.out.println();
+        Consola.info("Archivo .huf en disco: " + Files.size(huf) + " bytes (incluye encabezado)");
+        if (Files.readString(out).equals(texto))
+            Consola.ok("Verificación: el archivo descomprimido es IDÉNTICO al original.");
+        else
+            Consola.error("El archivo descomprimido NO coincide con el original.");
+    }
+
+    /** Para mostrar saltos de línea y espacios de forma legible en la tabla. */
+    private static String simbolo(char c) {
+        return c == '\n' ? "\\n" : c == '\r' ? "\\r" : c == ' ' ? "' '" : String.valueOf(c);
     }
 }
