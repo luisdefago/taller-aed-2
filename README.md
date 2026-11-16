@@ -36,6 +36,7 @@ Ejecutar las pruebas de cada módulo:
 
 ```
 java -cp out redsens.app.VerificacionM1
+java -cp out redsens.app.VerificacionM5
 java -cp out redsens.app.VerificacionM6
 ```
 

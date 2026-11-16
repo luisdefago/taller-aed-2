@@ -9,6 +9,8 @@ import redsens.indice.ArbolAVL; // M2
 import redsens.indice.ExperimentoM2; // M2
 import redsens.indice.IndiceEstaciones; // M2
 import redsens.modelo.Estacion;
+import redsens.guardias.CalendarioGuardias;
+import redsens.guardias.ExperimentoM5;
 import redsens.registro.*;
 import redsens.sim.*;
 
@@ -50,6 +52,7 @@ public class Main {
             System.out.println("   2) M6 - Simulación y pruebas");
             System.out.println("   3) Informe de rendimiento");
             System.out.println("   4) M2 - Índice ordenado (AVL)"); // M2
+            System.out.println("   5) M5 - Guardias rotativas (Josephus)");
             System.out.println("   0) Salir");
             switch (leer(in)) {
                 case "1" -> seccion(in, "M1 - Registro de estaciones (tabla hash)", new String[] {
@@ -64,7 +67,7 @@ public class Main {
                         new Accion[] { i -> opcion1(), i -> opcion2(), i -> opcion3(), i -> opcion4() });
                 case "3" -> seccion(in, "Informe de rendimiento", new String[] { "Ver informe acumulado" },
                         new Accion[] { i -> System.out.println(inf.size() == 0
-                                ? "\n  Todavía no hay mediciones. Ejecutá el experimento M1 desde la sección M1."
+                                ? "\n  Todavía no hay mediciones. Ejecutá un experimento (M1, M2 o M5) desde su sección."
                                 : "\n" + inf.render()) });
                 case "4" -> seccion(in, "M2 - Índice ordenado (AVL)", new String[] { // M2
                         "Listar estaciones por rango de números", "Reporte de estaciones críticas",
@@ -72,11 +75,14 @@ public class Main {
                         "Experimento M2 (ABB vs AVL)" },
                         new Accion[] { Main::listarRango, i -> reporteCriticas(), i -> estadoIndice(),
                                 i -> recorridos(), i -> experimentoM2() });
+                case "5" -> seccion(in, "M5 - Guardias rotativas (Josephus)", new String[] {
+                        "Generar el calendario de guardias", "Experimento M5 (lista vs. árbol)" },
+                        new Accion[] { Main::calendario, i -> experimentoM5() });
                 case "0" -> {
                     System.out.println("  ¡Hasta luego!");
                     return;
                 }
-                default -> System.out.println("  [!] Opción inválida. Elegí 0, 1, 2, 3 o 4."); // M2: y se vuelve a
+                default -> System.out.println("  [!] Opción inválida. Elegí 0, 1, 2, 3, 4 o 5."); // M2: y se vuelve a
                                                                                                // dibujar el menú
             }
         }
@@ -314,6 +320,23 @@ public class Main {
         if (tabla == null)
             Consola.error("Primero cargá la red (M1 > opción 1).");
         return tabla != null;
+    }
+
+    // ------------------------------------------------------------------ M5
+    private static void calendario(Scanner in) {
+        int n = Consola.pedirEntero(in, "Cantidad de técnicos", 12, 1, 1000);
+        System.out.println();
+        System.out.println(new CalendarioGuardias(n, cfg.mJosephus).texto());   // M = el del grupo
+    }
+
+    private static void experimentoM5() throws Exception {
+        System.out.println("\n  Midiendo lista y árbol para N = 1.000, 10.000 y 100.000 (puede tardar unos segundos)...\n");
+        List<ExperimentoM5.Fila> filas = ExperimentoM5.ejecutar(cfg.mJosephus);
+        System.out.println(ExperimentoM5.formatear(filas));
+        inf.quitarModulo("M5");                      // para no duplicar filas si se repite el experimento
+        ExperimentoM5.alInforme(filas, inf);
+        inf.guardar(Path.of("datos/informe_rendimiento.txt"));
+        Consola.ok("Resultados agregados al informe (datos/informe_rendimiento.txt).");
     }
 
     private static void experimentoM1() throws Exception {
