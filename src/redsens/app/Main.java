@@ -24,8 +24,7 @@ import redsens.compresion.Huffman;
 
 
 /**
- * Menú de consola de RedSens. Por ahora tiene M6 (simulación), M2 (índice
- * ordenado) y M1 (tabla hash); los otros módulos se agregan acá.
+ * Menú de consola de RedSens: integra los seis módulos (M1 a M6) en un único sistema.
  * Uso: java -cp out redsens.app.Main [numeroDeGrupo] (por defecto, grupo 4)
  */
 public class Main {
@@ -60,52 +59,54 @@ public class Main {
                     : "Red cargada: " + tabla.size() + " estaciones en " + tabla.nombre());
             Consola.subtitulo("Menú principal");
             System.out.println("   1) M1 - Registro de estaciones (tabla hash)");
-            System.out.println("   2) M6 - Simulación y pruebas");
-            System.out.println("   3) Informe de rendimiento");
-            System.out.println("   4) M2 - Índice ordenado (AVL)"); // M2
-            System.out.println("   5) M3 - Red vial y plan de visitas (grafos)"); // M3
-            System.out.println("   6) M5 - Guardias rotativas (Josephus)");
-            System.out.println("   7) M4 - Transmisión comprimida (Huffman)");
+            System.out.println("   2) M2 - Índice ordenado (AVL)");
+            System.out.println("   3) M3 - Red vial y plan de visitas (grafos)");
+            System.out.println("   4) M4 - Transmisión comprimida (Huffman)");
+            System.out.println("   5) M5 - Guardias rotativas (Josephus)");
+            System.out.println("   6) M6 - Simulación, pruebas y batería de experimentos");
+            System.out.println("   7) Informe de rendimiento");
             System.out.println("   0) Salir");
             switch (leer(in)) {
                 case "1" -> seccion(in, "M1 - Registro de estaciones (tabla hash)", new String[] {
-                        "Cargar la red (generar N estaciones)", "Buscar estación por código",
+                        "Cargar la red (generar N estaciones en la tabla hash y en el AVL)", "Buscar estación por código",
                         "Eliminar estación por código",
                         "Estado de la tabla hash", "Experimento M1 (10.000 estaciones)" },
                         new Accion[] { Main::cargarRed, Main::buscar, Main::eliminar, i -> estado(),
                                 i -> experimentoM1() });
-                case "2" -> seccion(in, "M6 - Simulación y pruebas", new String[] {
-                        "Generar 10 estaciones de ejemplo", "Demostrar semillas (iguales / distintas)",
-                        "Comprobar uniformidad (batería 0-100)", "Generar archivo de mediciones" },
-                        new Accion[] { i -> opcion1(), i -> opcion2(), i -> opcion3(), i -> opcion4() });
-                case "3" -> seccion(in, "Informe de rendimiento", new String[] { "Ver informe acumulado" },
-                        new Accion[] { i -> System.out.println(inf.size() == 0
-                                ? "\n  Todavía no hay mediciones. Ejecutá un experimento (M1, M2 o M5) desde su sección."
-                                : "\n" + inf.render()) });
-                case "4" -> seccion(in, "M2 - Índice ordenado (AVL)", new String[] { // M2
+                case "2" -> seccion(in, "M2 - Índice ordenado (AVL)", new String[] {
                         "Listar estaciones por rango de números", "Reporte de estaciones críticas",
                         "Estado del índice (altura, nodos, hojas)", "Recorridos (inorden, preorden, postorden)",
                         "Experimento M2 (ABB vs AVL)" },
                         new Accion[] { Main::listarRango, i -> reporteCriticas(), i -> estadoIndice(),
                                 i -> recorridos(), i -> experimentoM2() });
-                case "5" -> seccion(in, "M3 - Red vial y plan de visitas (grafos)", new String[] { // M3
+                case "3" -> seccion(in, "M3 - Red vial y plan de visitas (grafos)", new String[] {
                         "Ver la red (matriz y lista de adyacencia)", "BFS desde la base (niveles 1, 2 y 3)",
                         "DFS: conexidad y corte de rutas", "Dijkstra: distancias y caminos desde una localidad",
                         "Floyd: distancias mínimas entre todos los pares",
                         "Plan de visitas de la cuadrilla (críticas del M2)" },
                         new Accion[] { i -> verRed(), i -> bfsBase(), Main::cortarRutas, Main::dijkstra,
                                 i -> floyd(), i -> planVisitas() });
-                case "6" -> seccion(in, "M5 - Guardias rotativas (Josephus)", new String[] {
-                        "Generar el calendario de guardias", "Experimento M5 (lista vs. árbol)" },
-                        new Accion[] { Main::calendario, i -> experimentoM5() });
-                case "7" -> seccion(in, "M4 - Transmisión comprimida (Huffman)", new String[] {
+                case "4" -> seccion(in, "M4 - Transmisión comprimida (Huffman)", new String[] {
                         "Caso de verificación (WWXWYZWX)", "Generar, comprimir, descomprimir y verificar mediciones" },
                         new Accion[] { i -> verificarHuffman(), i -> comprimirMediciones() });
+                case "5" -> seccion(in, "M5 - Guardias rotativas (Josephus)", new String[] {
+                        "Generar el calendario de guardias", "Experimento M5 (lista vs. árbol)" },
+                        new Accion[] { Main::calendario, i -> experimentoM5() });
+                case "6" -> seccion(in, "M6 - Simulación, pruebas y batería de experimentos", new String[] {
+                        "Generar 10 estaciones de ejemplo", "Demostrar semillas (iguales / distintas)",
+                        "Comprobar uniformidad (batería 0-100)", "Generar archivo de mediciones",
+                        "Batería de experimentos (M1, M2 y M5) e informe de rendimiento" },
+                        new Accion[] { i -> opcion1(), i -> opcion2(), i -> opcion3(), i -> opcion4(),
+                                i -> bateriaExperimentos() });
+                case "7" -> seccion(in, "Informe de rendimiento", new String[] { "Ver informe acumulado" },
+                        new Accion[] { i -> System.out.println(inf.size() == 0
+                                ? "\n  Todavía no hay mediciones. Ejecutá la batería (M6) o un experimento desde su sección."
+                                : "\n" + inf.render()) });
                 case "0" -> {
                     System.out.println("  ¡Hasta luego!");
                     return;
                 }
-                default -> System.out.println("  [!] Opción inválida. Elegí 0 a 7."); // y se vuelve a
+                default -> System.out.println("  [!] Opción inválida. Elegí un número de 0 a 7."); // y se vuelve a
                                                                                                   // dibujar el menú
             }
         }
@@ -188,6 +189,21 @@ public class Main {
         System.out.println();
         Consola.ok("Escrito datos/mediciones.txt con " + n + " líneas (de " + est.size() + " estaciones"
                 + (red != null ? " de la red cargada" : " simuladas, no hay red cargada") + ").");
+    }
+
+    /**
+     * M6: corre juntos los experimentos de M1, M2 y M5 (lo pide el enunciado) y muestra el informe.
+     * Cada experimento agrega sus filas al informe y lo guarda en datos/informe_rendimiento.txt.
+     */
+    private static void bateriaExperimentos() throws Exception {
+        Consola.subtitulo("M1 - Tabla hash");
+        experimentoM1();
+        Consola.subtitulo("M2 - ABB vs AVL");
+        experimentoM2();
+        Consola.subtitulo("M5 - Josephus: lista vs. árbol");
+        experimentoM5();
+        Consola.subtitulo("Informe de rendimiento (M6)");
+        System.out.println("\n" + inf.render());
     }
 
     // ------------------------------------------------------------------ M2
@@ -477,8 +493,11 @@ public class Main {
             return;
         String cod = Consola.pedirTexto(in, "Código a eliminar").toUpperCase();
         System.out.println();
-        if (tabla.eliminar(cod))
+        if (tabla.eliminar(cod)) {
             Consola.ok("Eliminada (borrado perezoso): " + cod);
+            // M2: se saca también del índice, así el reporte de críticas y el plan de visitas (M3) no la incluyen
+            if (indice != null) indice.eliminar(Integer.parseInt(cod.substring(cod.indexOf('-') + 1)));
+        }
         else
             Consola.error("No existe una estación con código " + cod);
     }
